@@ -32,11 +32,16 @@ class OllamaAdapter(BaseLLMAdapter):
         """
         url = f"{self.api_base}/api/generate"
         default_options = {
-            "num_predict": 256,
+            "num_predict": 2048,
             "temperature": 0.2
         }
+        
+        format_val = None
         if options:
-            default_options.update(options)
+            options_copy = dict(options)
+            if "format" in options_copy:
+                format_val = options_copy.pop("format")
+            default_options.update(options_copy)
 
         payload = {
             "model": self.model_tag,
@@ -46,6 +51,8 @@ class OllamaAdapter(BaseLLMAdapter):
         }
         if system_prompt:
             payload["system"] = system_prompt
+        if format_val:
+            payload["format"] = format_val
 
         data = json.dumps(payload).encode('utf-8')
         req = urllib.request.Request(

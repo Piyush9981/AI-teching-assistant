@@ -176,7 +176,7 @@ class GradingService:
                     max_marks=q_block["max_marks"]
                 )
 
-                raw_response = self.llm_service.generate_text(prompt=user_prompt, system_prompt=system_prompt)
+                raw_response = self.llm_service.generate_text(prompt=user_prompt, system_prompt=system_prompt, options={"format": "json"})
                 eval_data = self._clean_and_parse_json(raw_response)
                 validated_eval = self._validate_grading_schema(eval_data, q_block["question_number"], q_block["max_marks"])
                 evaluated_scores.append(validated_eval)
@@ -294,15 +294,22 @@ class GradingService:
         return blocks
 
     def _clean_and_parse_json(self, response_text: str) -> Dict[str, Any]:
-        """Strips markdown block markers and parses JSON string."""
+        """Strips markdown block markers, extracts the outer JSON object, and parses it."""
         clean_text = response_text.strip()
-        if clean_text.startswith("```"):
-            lines = clean_text.splitlines()
-            if lines[0].startswith("```"):
-                lines = lines[1:]
-            if lines and lines[-1].startswith("```"):
-                lines = lines[:-1]
-            clean_text = "\n".join(lines).strip()
+        
+        # Extract the main JSON object block if present to ignore conversational prefixes/suffixes
+        start_idx = clean_text.find('{')
+        end_idx = clean_text.rfind('}')
+        if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+            clean_text = clean_text[start_idx:end_idx + 1]
+        else:
+            if clean_text.startswith("```"):
+                lines = clean_text.splitlines()
+                if lines[0].startswith("```"):
+                    lines = lines[1:]
+                if lines and lines[-1].startswith("```"):
+                    lines = lines[:-1]
+                clean_text = "\n".join(lines).strip()
 
         try:
             return json.loads(clean_text)

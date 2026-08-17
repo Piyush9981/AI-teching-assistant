@@ -5,7 +5,6 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 sys.path.insert(0, os.getcwd())
 sys.stdout.reconfigure(encoding='utf-8')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'config.settings'
-os.environ['DATABASE_URL'] = ''
 import django
 django.setup()
 
