@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "title": "AI Teacher Assistant",
+  "shortDescription": "A Assist For teachers that help in Repetative tasks.",
+  "category": "Agentic AI",
+  "technologies": [
+    "Python",
+    "Django",
+    "HTML",
+    "CSS",
+    "JavaScript"
+  ],
+  "featured": true,
+  "displayOrder": 1,
+  "liveDemoUrl": "https://yoga-booking-piyush.onrender.com/",
+  "thumbnail": "assets/thumbnail.png",
+  "status": "Completed",
+  "completedDate": "2026-05-15"
+}
